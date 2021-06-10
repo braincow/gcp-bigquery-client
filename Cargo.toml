@@ -16,7 +16,9 @@ keywords = ["gcp", "bigquery", "google-cloud"]
 categories = ["database"]
 
 [dependencies]
-yup-oauth2 = "5.0.3"
+# we use my fork of the yup-oauth2 until adc authenticator is incorporated to upstream
+yup-oauth2 = { git = "https://github.com/braincow/yup-oauth2.git", branch = "gcp_instance_metadata" }
+#yup-oauth2 = "5.0.3"
 hyper = "0.14.4"
 hyper-rustls = "0.22.1"
 thiserror = "1.0.23"
