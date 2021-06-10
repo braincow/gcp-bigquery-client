@@ -107,7 +107,7 @@ impl Client {
         })
     }
 
-    pub async fn from_authenticator(auth: Authenticator<HttpsConnector<HttpConnector>>, readonly: bool) -> Self {
+    pub fn from_authenticator(auth: Authenticator<HttpsConnector<HttpConnector>>, readonly: bool) -> Self {
         let scopes = if readonly {
             ["https://www.googleapis.com/auth/bigquery.readonly"]
         } else {
