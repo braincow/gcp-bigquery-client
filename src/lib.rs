@@ -20,8 +20,11 @@ extern crate serde_json;
 
 use std::env;
 
+use hyper::client::HttpConnector;
+use hyper_rustls::HttpsConnector;
 use reqwest::Response;
 use serde::Deserialize;
+use yup_oauth2::authenticator::Authenticator;
 use yup_oauth2::ServiceAccountKey;
 
 use crate::auth::{service_account_authenticator, ServiceAccountAuthenticator};
@@ -102,6 +105,27 @@ impl Client {
             model_api: ModelApi::new(client.clone(), sa_auth.clone()),
             project_api: ProjectApi::new(client, sa_auth),
         })
+    }
+
+    pub async fn from_authenticator(auth: Authenticator<HttpsConnector<HttpConnector>>, readonly: bool) -> Self {
+        let scopes = if readonly {
+            ["https://www.googleapis.com/auth/bigquery.readonly"]
+        } else {
+            ["https://www.googleapis.com/auth/bigquery"]
+        };
+
+        let sa_auth = ServiceAccountAuthenticator::from_authenticator(auth, &scopes);
+
+        let client = reqwest::Client::new();
+        Self {
+            dataset_api: DatasetApi::new(client.clone(), sa_auth.clone()),
+            table_api: TableApi::new(client.clone(), sa_auth.clone()),
+            job_api: JobApi::new(client.clone(), sa_auth.clone()),
+            tabledata_api: TableDataApi::new(client.clone(), sa_auth.clone()),
+            routine_api: RoutineApi::new(client.clone(), sa_auth.clone()),
+            model_api: ModelApi::new(client.clone(), sa_auth.clone()),
+            project_api: ProjectApi::new(client, sa_auth),
+        }
     }
 
     /// Returns a dataset API handler.

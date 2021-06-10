@@ -34,6 +34,16 @@ impl ServiceAccountAuthenticator {
             }),
         }
     }
+
+    pub(crate) fn from_authenticator(
+        auth: Authenticator<HttpsConnector<HttpConnector>>,
+        scopes: &[&str],
+    ) -> ServiceAccountAuthenticator {
+        ServiceAccountAuthenticator {
+            auth: Arc::new(auth),
+            scopes: scopes.iter().map(|scope| scope.to_string()).collect(),
+        }
+    }
 }
 
 pub(crate) async fn service_account_authenticator(
